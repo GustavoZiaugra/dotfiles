@@ -1,6 +1,7 @@
 call plug#begin('~/.local/share/nvim/plugged')
   Plug 'scrooloose/nerdtree'
   Plug 'vim-ruby/vim-ruby'
+  Plug 'elixir-editors/vim-elixir'
   Plug 'tpope/vim-commentary'
   Plug 'janko-m/vim-test'
   Plug 'ctrlpvim/ctrlp.vim'
