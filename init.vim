@@ -8,9 +8,15 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'drewtempelmeyer/palenight.vim'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " Plug 'thoughtbot/vim-rspec'
   " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   " Plug 'junegunn/fzf.vim'
+  Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
+
 call plug#end()
 
 filetype plugin indent on
@@ -30,7 +36,7 @@ if (has("termguicolors"))
   set termguicolors
 endif
 set background=dark
-set mouse=a
+" set mouse=a
 set clipboard=unnamedplus
 set laststatus=2
 set tabstop=2 shiftwidth=2 expandtab softtabstop=2
@@ -71,6 +77,26 @@ nmap <silent> <leader>a :TestSuite<CR>
 nmap <silent> <leader>l :TestLast<CR>
 nmap <silent> <leader>g :TestVisit<CR>
 let test#strategy = 'neovim'
+
+" Delete trailing white space on save
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite * :call DeleteTrailingWS()
+
+let g:LanguageClient_serverCommands = {
+    \ 'ruby': ['tcp://localhost:7658']
+    \ }
+
+" Don't send a stop signal to the server when exiting vim.
+" This is optional, but I don't like having to restart Solargraph
+" every time I restart vim.
+let g:LanguageClient_autoStop = 0
+
+" Configure ruby omni-completion to use the language client:
+autocmd FileType ruby setlocal omnifunc=LanguageClient#complete
 
 " " Fuzzy-find with fzf
 " map <C-p> :Files<cr>
