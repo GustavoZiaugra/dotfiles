@@ -9,6 +9,8 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'mhinz/vim-mix-format'
+  Plug 'JakeBecker/elixir-ls', { 'do': { -> g:elixirls.compile() } }
   " Plug 'thoughtbot/vim-rspec'
   " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   " Plug 'junegunn/fzf.vim'
@@ -85,6 +87,29 @@ func! DeleteTrailingWS()
   exe "normal `z"
 endfunc
 autocmd BufWrite * :call DeleteTrailingWS()
+
+let g:elixirls = {
+\ 'path': printf('%s/%s', stdpath('config'), '~/.local/share/nvim/plugged/elixir-ls'),
+\ }
+
+let g:elixirls.lsp = printf(
+  \ '%s/%s',
+  \ g:elixirls.path,
+  \ 'release/language_server.sh')
+
+function! g:elixirls.compile(...)
+  let l:commands = join([
+    \ 'mix local.hex --force',
+    \ 'mix local.rebar --force',
+    \ 'mix deps.get',
+    \ 'mix compile',
+    \ 'mix elixir_ls.release'
+    \ ], '&&')
+
+  echom '>>> Compiling elixirls'
+  call system(l:commands)
+  echom '>>> elixirls compiled'
+endfunction
 
 let g:LanguageClient_serverCommands = {
     \ 'ruby': ['tcp://localhost:7658']
